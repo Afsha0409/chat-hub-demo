@@ -61,6 +61,15 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				whatsapp: {
+					bg: 'hsl(var(--whatsapp-bg))',
+					sidebar: 'hsl(var(--whatsapp-sidebar))',
+					'chat-bg': 'hsl(var(--whatsapp-chat-bg))',
+					'message-sent': 'hsl(var(--whatsapp-message-sent))',
+					'message-received': 'hsl(var(--whatsapp-message-received))',
+					'input-bg': 'hsl(var(--whatsapp-input-bg))',
+					border: 'hsl(var(--whatsapp-border))'
 				}
 			},
 			borderRadius: {

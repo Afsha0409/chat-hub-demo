@@ -14,7 +14,130 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          last_message_at: string | null
+          unread_count: number | null
+          updated_at: string
+          user_id: string | null
+          wa_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          unread_count?: number | null
+          updated_at?: string
+          user_id?: string | null
+          wa_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          unread_count?: number | null
+          updated_at?: string
+          user_id?: string | null
+          wa_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          content: string | null
+          conversation_id: string | null
+          created_at: string
+          id: string
+          is_from_me: boolean | null
+          media_url: string | null
+          message_type: string | null
+          meta_msg_id: string | null
+          sender_name: string | null
+          status: string | null
+          timestamp: string
+          updated_at: string
+          wa_id: string
+        }
+        Insert: {
+          content?: string | null
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          is_from_me?: boolean | null
+          media_url?: string | null
+          message_type?: string | null
+          meta_msg_id?: string | null
+          sender_name?: string | null
+          status?: string | null
+          timestamp?: string
+          updated_at?: string
+          wa_id: string
+        }
+        Update: {
+          content?: string | null
+          conversation_id?: string | null
+          created_at?: string
+          id?: string
+          is_from_me?: boolean | null
+          media_url?: string | null
+          message_type?: string | null
+          meta_msg_id?: string | null
+          sender_name?: string | null
+          status?: string | null
+          timestamp?: string
+          updated_at?: string
+          wa_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string
+          id: string
+          name: string | null
+          phone_number: string | null
+          profile_pic_url: string | null
+          updated_at: string
+          wa_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: string | null
+          phone_number?: string | null
+          profile_pic_url?: string | null
+          updated_at?: string
+          wa_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string | null
+          phone_number?: string | null
+          profile_pic_url?: string | null
+          updated_at?: string
+          wa_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
