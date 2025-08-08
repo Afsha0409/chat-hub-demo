@@ -19,6 +19,10 @@ export default {
 		},
 		extend: {
 			colors: {
+				'wa-light-bg': '#f0f2f5',
+				'wa-light-hover': '#e6e6e6',
+				'wa-active-bg': '#d9fdd3',
+				'wa-green': '#25d366',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -70,8 +74,18 @@ export default {
 					'message-received': 'hsl(var(--whatsapp-message-received))',
 					'input-bg': 'hsl(var(--whatsapp-input-bg))',
 					border: 'hsl(var(--whatsapp-border))'
-				}
+				},
 			},
+			fontFamily: {
+				whats: ['"Segoe UI"', "Helvetica", "Arial", "sans-serif"],
+			},
+			fontSize: {
+				'wa-title': ['38px', { lineHeight: '42px', fontWeight: '300' }], // landing header
+				'wa-lg': ['16px', { lineHeight: '30px', fontWeight: '500' }],    // conversation name
+				'wa-md': ['14px', { lineHeight: '20px', fontWeight: '400' }],    // message text
+				'wa-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }],    // timestamps, labels
+			},
+
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',

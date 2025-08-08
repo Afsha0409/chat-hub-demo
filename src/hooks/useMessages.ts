@@ -1,92 +1,41 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { Message, Conversation } from '@/types/whatsapp';
+import { useEffect, useState } from 'react';
+import { Message } from '@/types/whatsapp';
 
-export const useMessages = (conversationId: string | null) => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(false);
+export function useMessages(wa_id) {
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!conversationId) {
-      setMessages([]);
-      return;
-    }
-
-    const fetchMessages = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from('messages')
-          .select('*')
-          .eq('conversation_id', conversationId)
-          .order('timestamp', { ascending: true });
-
-        if (error) throw error;
-        setMessages((data as Message[]) || []);
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-      } finally {
+    if (!wa_id) return;
+    setLoading(true);
+    fetch(`http://localhost:3001/api/messages?wa_id=${wa_id}`)
+      .then(res => res.json())
+      .then(data => {
+        setMessages(data);
         setLoading(false);
-      }
-    };
+      })
+      .catch(() => setLoading(false));
+  }, [wa_id]);
 
-    fetchMessages();
-
-    // Subscribe to real-time updates
-    const channel = supabase
-      .channel('messages-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`
-        },
-        (payload) => {
-          if (payload.eventType === 'INSERT') {
-            setMessages(prev => [...prev, payload.new as Message]);
-          } else if (payload.eventType === 'UPDATE') {
-            setMessages(prev => 
-              prev.map(msg => 
-                msg.id === payload.new.id ? payload.new as Message : msg
-              )
-            );
-          } else if (payload.eventType === 'DELETE') {
-            setMessages(prev => 
-              prev.filter(msg => msg.id !== payload.old.id)
-            );
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [conversationId]);
-
-  const sendMessage = async (content: string) => {
-    if (!conversationId || !content.trim()) return;
-
-    try {
-      const { error } = await supabase
-        .from('messages')
-        .insert({
-          conversation_id: conversationId,
-          wa_id: 'demo_user',
-          content: content.trim(),
-          message_type: 'text',
-          is_from_me: true,
-          status: 'sent',
-          timestamp: new Date().toISOString()
-        });
-
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error sending message:', error);
+  // Accepts either a string (text) or a Message object (audio)
+  const sendMessage = async (input) => {
+    if (!wa_id || !input) return;
+    if (typeof input === 'string') {
+      const res = await fetch('http://localhost:3001/api/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ wa_id, content: input })
+      });
+      const newMsg = await res.json();
+      setMessages(msgs => [...msgs, newMsg]);
+    } else if (typeof input === 'object' && input.message_type === 'audio') {
+      // For local demo, just add the audio message to state
+      setMessages(msgs => [...msgs, {
+        ...input,
+        id: input.id || Math.random().toString(36).slice(2),
+      } as Message]);
     }
   };
 
   return { messages, loading, sendMessage };
-};
+}

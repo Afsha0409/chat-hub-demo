@@ -87,3 +87,53 @@ ALTER TABLE public.messages REPLICA IDENTITY FULL;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.users;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.conversations;
 ALTER PUBLICATION supabase_realtime ADD TABLE public.messages;
+
+
+
+-- Insert sample users
+INSERT INTO public.users (wa_id, name, phone_number) VALUES
+  ('1234567890', 'John Doe', '+1234567890'),
+  ('0987654321', 'Jane Smith', '+0987654321'),
+  ('1122334455', 'Mike Johnson', '+1122334455')
+ON CONFLICT (wa_id) DO NOTHING;
+
+-- Insert sample conversations
+INSERT INTO public.conversations (wa_id, user_id, last_message_at, unread_count)
+SELECT 
+  u.wa_id,
+  u.id,
+  NOW() - INTERVAL '1 hour',
+  0
+FROM public.users u
+ON CONFLICT DO NOTHING;
+
+
+-- Insert users
+INSERT INTO public.users (wa_id, name, phone_number) VALUES
+  ('919937320320', 'Ravi Kumar', '+919937320320')
+ON CONFLICT (wa_id) DO NOTHING;
+
+-- Insert conversation for Ravi Kumar
+INSERT INTO public.conversations (wa_id, user_id, last_message_at, unread_count)
+SELECT 
+  '919937320320',
+  u.id,
+  NOW(),
+  0
+FROM public.users u
+WHERE u.wa_id = '919937320320'
+ON CONFLICT DO NOTHING;
+
+-- Insert a message for the conversation
+INSERT INTO public.messages (conversation_id, wa_id, content, message_type, timestamp, status, is_from_me, sender_name)
+SELECT 
+  c.id,
+  c.wa_id,
+  'Hi, I’d like to know more about your services.',
+  'text',
+  NOW(),
+  'sent',
+  false,
+  'Ravi Kumar'
+FROM public.conversations c
+WHERE c.wa_id = '919937320320';

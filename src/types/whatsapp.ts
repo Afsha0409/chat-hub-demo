@@ -18,6 +18,7 @@ export interface Conversation {
   updated_at: string;
   user?: User;
   latest_message?: Message;
+  messages?: Message[];
 }
 
 export interface Message {
@@ -28,12 +29,14 @@ export interface Message {
   message_type: string;
   content?: string;
   media_url?: string;
+  audio?: Blob | string; // For local or remote audio
   timestamp: string;
   status: 'sent' | 'delivered' | 'read' | 'failed';
   is_from_me: boolean;
   sender_name?: string;
   created_at: string;
   updated_at: string;
+  
 }
 
 export interface WebhookPayload {

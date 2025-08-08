@@ -40,3 +40,12 @@
 .read-the-docs {
   color: #888;
 }
+
+/* font-family: "Google Sans", "Segoe UI", sans-serif; */
+@font-face {
+  font-family: "Google Sans";
+  src: url("/fonts/GoogleSans-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
